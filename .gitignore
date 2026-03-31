@@ -40,6 +40,7 @@ logs/
 
 # Data
 *.csv
+!Hermenius-Front/datasets/*.csv
 *.xlsx
 *.xls
 *.sqlite
@@ -49,7 +50,7 @@ logs/
 uploads/
 temp_*
 
-# Node (if any frontend tooling added)
+# Node
 node_modules/
 npm-debug.log*
 
