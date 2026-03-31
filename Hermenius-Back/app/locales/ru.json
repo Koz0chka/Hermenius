@@ -1,0 +1,17 @@
+{
+  "file_load_success": "Файл успешно загружен. Выполнен анализ.",
+  "file_load_partial": "Файл загружен, но ИИ ответил с ограничениями: {}",
+  "ai_error_fallback": "Не удалось получить ответ от ИИ.",
+  "outliers_found": "Обнаружено выбросов: {} в колонках: {}",
+  "correlation_title": "Корреляционная матрица",
+  "scatter_title": "Зависимость: {} от {}",
+  "histogram_title": "Распределение: {}",
+  "box_title": "{} по {}",
+  "general_analysis": "Общий анализ",
+  "metricRows": "Всего строк",
+  "metricColumns": "Колонок",
+  "metric_missing": "Пропуски",
+  "metric_duplicates": "Дубликаты",
+  "metric_numeric": "Числовых",
+  "metric_categorical": "Категорий"
+}

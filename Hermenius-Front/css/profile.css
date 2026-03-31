@@ -1,0 +1,120 @@
+.profile-page { min-height: 100vh; display: flex; flex-direction: column; }
+
+.profile-header {
+    position: fixed; top: 0; left: 0; right: 0;
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 1.5rem 2rem; z-index: 100;
+}
+
+.user-info { display: flex; align-items: center; gap: 0.75rem; }
+.user-avatar {
+    width: 40px; height: 40px; border-radius: 50%; background: rgba(255,255,255,0.95);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.8rem; font-weight: 700; color: var(--accent-primary);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15); font-family: 'JetBrains Mono', monospace;
+}
+.user-name {
+    font-weight: 600; font-size: 0.9rem; color: white;
+    text-shadow: 0 2px 8px rgba(0,0,0,0.2); max-width: 200px;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+
+.profile-content {
+    flex: 1; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; padding: 5rem 2rem 2rem;
+}
+
+.profile-monolith {
+    position: relative; width: 100%; max-width: 1400px;
+    min-height: 500px; display: flex; justify-content: center; align-items: center;
+}
+
+.profile-planks { display: flex; width: 100%; gap: 0; }
+.profile-plank {
+    background: var(--bg-card); backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px);
+    padding: 2.5rem 0; box-shadow: var(--shadow-md);
+    border: 2px solid transparent; transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+.profile-plank:hover { border-color: var(--border-hover); box-shadow: 0 15px 35px rgba(77,166,255,0.15); }
+
+.profile-plank-left { flex: 1; border-radius: 40px 0 0 40px; padding-left: 40px; padding-right: 60px; display: flex; justify-content: flex-start; }
+.profile-plank-right { flex: 1; border-radius: 0 40px 40px 0; padding-right: 40px; padding-left: 60px; display: flex; justify-content: flex-end; }
+.profile-plank-content { max-width: 320px; }
+.profile-plank-left .profile-plank-content { text-align: left; }
+.profile-plank-right .profile-plank-content { text-align: right; }
+.profile-plank-title { font-size: 1.4rem; font-weight: 600; margin-bottom: 0.75rem; color: var(--text-primary); }
+.profile-plank-text { color: var(--text-secondary); margin-bottom: 1.25rem; font-size: 0.95rem; line-height: 1.5; }
+.profile-plank-btn {
+    background: var(--accent-primary); color: white; border: none;
+    padding: 0.75rem 1.5rem; border-radius: var(--radius-full);
+    font-weight: 600; font-size: 0.9rem; cursor: pointer; transition: all 0.2s; font-family: inherit;
+}
+.profile-plank-btn:hover { background: #005bb5; transform: translateY(-2px); }
+
+.search-box { margin-top: 0.5rem; }
+.search-input {
+    width: 100%; background: rgba(0,0,0,0.05); border: 2px solid transparent;
+    border-radius: var(--radius-full); padding: 0.75rem 1.25rem;
+    font-size: 0.9rem; color: var(--text-primary); font-family: inherit; transition: all 0.2s;
+}
+.search-input:focus { outline: none; border-color: var(--accent-primary); background: white; }
+.search-input::placeholder { color: var(--text-muted); }
+
+.wheel-container { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 10; }
+.wheel {
+    width: 400px; height: 400px; border-radius: 50%; background: var(--bg-card);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.2); position: relative; overflow: hidden;
+    cursor: pointer; border: 2px solid transparent; transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+.wheel:hover { border-color: var(--border-hover); box-shadow: 0 20px 50px rgba(77,166,255,0.25); }
+
+.wheel-sector { position: absolute; width: 50%; height: 50%; top: 0; left: 0; transform-origin: 100% 100%; transition: filter 0.2s, opacity 0.2s; }
+.wheel-sector-bg { position: absolute; top: -100%; left: -100%; width: 200%; height: 200%; opacity: 0.6; transition: opacity 0.2s; border-radius: 50%; }
+.wheel-sector.active .wheel-sector-bg { opacity: 1; }
+.wheel-sector.dimmed .wheel-sector-bg { opacity: 0.25; }
+
+.wheel-sector-label { position: absolute; z-index: 2; text-align: center; pointer-events: none; }
+.wheel-sector-name { font-weight: 600; font-size: 0.85rem; color: white; text-shadow: 0 2px 8px rgba(0,0,0,0.5); margin-bottom: 0.25rem; white-space: nowrap; }
+.wheel-sector-meta { font-size: 0.7rem; color: rgba(255,255,255,0.9); white-space: nowrap; }
+
+.wheel-center {
+    position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+    width: 140px; height: 140px; border-radius: 50%; background: white;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.15); display: flex; align-items: center;
+    justify-content: center; z-index: 10; pointer-events: none;
+}
+.wheel-center-inner { text-align: center; }
+.wheel-label { display: block; font-size: 0.75rem; color: var(--text-muted); margin-bottom: 0.25rem; }
+.wheel-selected { display: block; font-weight: 600; font-size: 1rem; color: var(--accent-primary); max-width: 100px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+.upload-model-select {
+    display: flex; align-items: center; gap: 0.75rem;
+    margin-bottom: 1.5rem;
+}
+.upload-model-label {
+    font-size: 0.9rem; font-weight: 500; color: var(--text-primary); white-space: nowrap;
+}
+.upload-model-field {
+    flex: 1; padding: 0.6rem 1rem; border-radius: var(--radius-sm);
+    border: 2px solid var(--border-color); background: rgba(0,0,0,0.03);
+    font-family: inherit; font-size: 0.9rem; color: var(--text-primary); transition: border-color 0.2s;
+}
+.upload-model-field:focus { outline: none; border-color: var(--accent-primary); }
+
+@media (max-width: 1000px) {
+    .profile-planks { flex-direction: column; gap: 1rem; }
+    .profile-plank-left, .profile-plank-right { border-radius: 40px !important; padding: 2rem !important; justify-content: center; }
+    .profile-plank-left .profile-plank-content, .profile-plank-right .profile-plank-content { text-align: center; margin: 0 auto; }
+    .wheel-container { position: relative; transform: translate(-50%, 0); margin-top: 2rem; }
+}
+
+@media (max-width: 768px) {
+    .wheel { width: 320px; height: 320px; }
+    .wheel-center { width: 110px; height: 110px; }
+    .wheel-selected { font-size: 0.85rem; }
+}
+
+@media (max-width: 480px) {
+    .wheel { width: 260px; height: 260px; }
+    .wheel-center { width: 90px; height: 90px; }
+}

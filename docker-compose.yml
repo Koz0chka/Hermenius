@@ -1,0 +1,41 @@
+services:
+  backend:
+    build:
+      context: ./Hermenius-Back
+      dockerfile: Dockerfile
+    container_name: hermenius-backend
+    restart: unless-stopped
+    env_file:
+      - .env
+    volumes:
+      - backend-uploads:/app/uploads
+    networks:
+      - hermenius-net
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  frontend:
+    build:
+      context: ./Hermenius-Front
+      dockerfile: Dockerfile
+    container_name: hermenius-frontend
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    depends_on:
+      backend:
+        condition: service_healthy
+    networks:
+      - hermenius-net
+
+volumes:
+  backend-uploads:
+    driver: local
+
+networks:
+  hermenius-net:
+    driver: bridge

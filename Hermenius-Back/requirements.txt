@@ -1,0 +1,13 @@
+fastapi
+uvicorn[standard]
+python-multipart
+
+pandas
+numpy
+openai
+python-dotenv
+
+pydantic-settings
+
+matplotlib
+seaborn

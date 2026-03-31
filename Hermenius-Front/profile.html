@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Hermenius — Выбор проекта</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/profile.css">
+    <link rel="stylesheet" href="css/themes.css">
+</head>
+<body>
+
+    <div class="page-container profile-page">
+
+        <!-- Шапка -->
+        <header class="profile-header">
+            <a href="index.html" class="back-link">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="19" y1="12" x2="5" y2="12"></line>
+                    <polyline points="12 19 5 12 12 5"></polyline>
+                </svg>
+                <span>На главную</span>
+            </a>
+            <div class="user-info">
+                <div class="user-avatar">AI</div>
+                <span class="user-name">User</span>
+            </div>
+        </header>
+
+        <!-- Основной контент -->
+        <main class="profile-content">
+
+            <div class="profile-monolith">
+
+                <!-- Плашки -->
+                <div class="profile-planks">
+
+                    <!-- Левая плашка: Новый проект -->
+                    <div class="profile-plank profile-plank-left">
+                        <div class="profile-plank-content">
+                            <h3 class="profile-plank-title">Новый проект</h3>
+                            <p class="profile-plank-text">Загрузите CSV-файл и создайте новый дашборд с ИИ-аналитикой</p>
+                            <button class="profile-plank-btn" id="newProjectBtn">Создать</button>
+                        </div>
+                    </div>
+
+                    <!-- Правая плашка: Поиск -->
+                    <div class="profile-plank profile-plank-right">
+                        <div class="profile-plank-content">
+                            <h3 class="profile-plank-title">Поиск</h3>
+                            <p class="profile-plank-text">Быстрый поиск по готовым датасетам</p>
+                            <div class="search-box">
+                                <input type="text" placeholder="Найти датасет..." class="search-input" id="searchInput">
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Навигационное колесо -->
+                <div class="wheel-container">
+                    <div class="wheel" id="projectWheel">
+                        <!-- Сектора заполняются из JS -->
+                        <div class="wheel-center">
+                            <div class="wheel-center-inner">
+                                <span class="wheel-label">Выберите датасет</span>
+                                <span class="wheel-selected" id="wheelSelected">—</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </main>
+
+    </div>
+
+    <!-- ========== Загрузка файла ========== -->
+    <div class="upload-modal-overlay" id="uploadModal">
+        <div class="upload-modal">
+            <div class="upload-modal-header">
+                <h2 class="upload-modal-title">Загрузка датасета</h2>
+                <button class="upload-modal-close" id="uploadModalClose">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+
+            <!-- Зона загрузки -->
+            <div class="upload-zone" id="uploadZone">
+                <div class="upload-zone-icon">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                        <polyline points="17 8 12 3 7 8"></polyline>
+                        <line x1="12" y1="3" x2="12" y2="15"></line>
+                    </svg>
+                </div>
+                <div class="upload-zone-text">Перетащите CSV-файл сюда</div>
+                <div class="upload-zone-hint">или нажмите для выбора файла</div>
+                <input type="file" class="upload-zone-input" id="fileInput" accept=".csv,.xlsx,.json,.parquet">
+            </div>
+
+            <!-- Информация о файле -->
+            <div class="upload-file-info" id="fileInfo">
+                <div class="upload-file-icon">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                        <polyline points="14 2 14 8 20 8"></polyline>
+                    </svg>
+                </div>
+                <div>
+                    <div class="upload-file-name" id="fileName">—</div>
+                    <div class="upload-file-size" id="fileSize">—</div>
+                </div>
+            </div>
+
+            <!-- Выбор модели -->
+            <div class="upload-model-select">
+                <label class="upload-model-label">Модель ИИ:</label>
+                <select class="upload-model-field" id="modelSelect">
+                    <option value="Llama">Llama</option>
+                    <option value="Qwen">Qwen</option>
+                    <option value="Nemotron">Nemotron</option>
+                    <option value="Step">Step</option>
+                    <option value="Z-AI">Z-AI</option>
+                </select>
+            </div>
+
+            <!-- Кнопки -->
+            <div class="upload-actions">
+                <button class="upload-btn upload-btn-primary" id="analyzeBtn" disabled>Анализировать</button>
+                <button class="upload-btn upload-btn-secondary" id="cancelBtn">Отмена</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== Оверлей загрузки ========== -->
+    <div class="loading-overlay" id="loadingOverlay" style="display:none;">
+        <div class="loading-spinner"></div>
+        <div class="loading-text" id="loadingText">Анализирую данные...</div>
+        <div class="loading-subtext" id="loadingSubtext">ИИ обрабатывает ваш датасет</div>
+    </div>
+
+    <script src="js/main.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/profile.js"></script>
+</body>
+</html>

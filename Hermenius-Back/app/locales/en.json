@@ -1,0 +1,17 @@
+{
+  "file_load_success": "File loaded successfully. Analysis complete.",
+  "file_load_partial": "File loaded, but AI response limited: {}",
+  "ai_error_fallback": "Could not get AI response.",
+  "outliers_found": "Outliers found: {} in columns: {}",
+  "correlation_title": "Correlation Matrix",
+  "scatter_title": "Dependency: {} vs {}",
+  "histogram_title": "Distribution: {}",
+  "box_title": "{} by {}",
+  "general_analysis": "General Analysis",
+  "metricRows": "Total Rows",
+  "metricColumns": "Columns",
+  "metric_missing": "Missing Values",
+  "metric_duplicates": "Duplicates",
+  "metric_numeric": "Numeric",
+  "metric_categorical": "Categorical"
+}
