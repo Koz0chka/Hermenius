@@ -7,7 +7,7 @@ RUN npm ci
 
 COPY . .
 
-RUN npm run build:prod
+RUN npx vite build
 
 FROM nginx:1.27-alpine
 
