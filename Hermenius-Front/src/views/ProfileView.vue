@@ -23,9 +23,9 @@ const loadingText = ref('')
 const loadingSubtext = ref('')
 
 const datasets: DatasetItem[] = [
-  { id: 'iris', name: 'Iris', meta: '30 строк, 5 колонок', color: '#10b981', colorEnd: '#06b6d4' },
-  { id: 'students', name: 'Students', meta: '25 строк, 8 колонок', color: '#0078e7', colorEnd: '#8b5cf6' },
-  { id: 'titanic', name: 'Titanic', meta: '30 строк, 10 колонок', color: '#f59e0b', colorEnd: '#ef4444' },
+  { id: 'iris', name: 'Iris', meta: '150 строк, 5 колонок', color: '#10b981', colorEnd: '#06b6d4' },
+  { id: 'students', name: 'Students', meta: '395 строк, 33 колонок', color: '#0078e7', colorEnd: '#8b5cf6' },
+  { id: 'titanic', name: 'Titanic', meta: '891 строк, 12 колонок', color: '#f59e0b', colorEnd: '#ef4444' },
 ]
 
 const userName = computed(() => authStore.user?.fullname || 'User')
