@@ -1,7 +1,7 @@
 from pydantic import BaseModel
-from typing import List, Dict, Any, Optional, Literal
+from typing import List, Dict, Any, Optional
 
-ModelEnum = Literal["Nemotron", "Step", "Z-AI", "Qwen", "Llama", "GPT"]
+ModelEnum = str
 
 class KeyMetric(BaseModel):
     label: str
@@ -41,3 +41,6 @@ class AnalysisResponse(BaseModel):
     plots: List[PlotData]
     outlier_report: Optional[OutlierReport] = None
     processing_time_sec: float
+    cached: bool = False
+    used_model: Optional[str] = None
+    used_group: Optional[str] = None
