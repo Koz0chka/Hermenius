@@ -80,10 +80,14 @@ class DataProcessor:
             
             if col in numeric_cols:
                 clean_data = col_data.dropna()
-                stats["min"] = float(clean_data.min()) if not clean_data.empty else 0
-                stats["max"] = float(clean_data.max()) if not clean_data.empty else 0
-                stats["mean"] = float(clean_data.mean()) if not clean_data.empty else 0
-                stats["std"] = float(clean_data.std()) if not clean_data.empty else 0
+                if not clean_data.empty:
+                    stats["min"] = float(clean_data.min())
+                    stats["max"] = float(clean_data.max())
+                    stats["mean"] = float(clean_data.mean())
+                    stats["std"] = float(clean_data.std())
+                    stats["q1"] = float(clean_data.quantile(0.25))
+                    stats["median"] = float(clean_data.median())
+                    stats["q3"] = float(clean_data.quantile(0.75))
             else:
                 top_val = col_data.value_counts().idxmax() if not col_data.empty else ""
                 stats["top"] = str(top_val)
@@ -98,8 +102,23 @@ class DataProcessor:
                 "numeric": numeric_cols,
                 "categorical": categorical_cols,
             },
-            "column_statistics": col_stats
+            "column_statistics": col_stats,
         }
+
+        if len(numeric_cols) >= 2:
+            corr_matrix = self.df_full[numeric_cols].corr()
+            correlations = []
+            for i in range(len(numeric_cols)):
+                for j in range(i + 1, len(numeric_cols)):
+                    val = round(float(corr_matrix.iloc[i, j]), 3)
+                    if abs(val) > 0.3:
+                        correlations.append({
+                            "col1": numeric_cols[i],
+                            "col2": numeric_cols[j],
+                            "correlation": val,
+                        })
+            correlations.sort(key=lambda x: abs(x["correlation"]), reverse=True)
+            self.metadata["top_correlations"] = correlations[:10]
 
     def get_key_metrics(self, lang: str = "ru") -> list:
         metrics = []

@@ -9,6 +9,7 @@ services:
       - .env
     volumes:
       - backend-uploads:/app/uploads
+      - backend-cache:/app/.cache
     ports:
       - "127.0.0.1:8000:8000"
     networks:
@@ -36,6 +37,8 @@ services:
 
 volumes:
   backend-uploads:
+    driver: local
+  backend-cache:
     driver: local
 
 networks:

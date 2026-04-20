@@ -1,15 +1,22 @@
+FROM node:22-alpine AS builder
+
+WORKDIR /app
+
+COPY package.json package-lock.json ./
+RUN npm ci
+
+COPY . .
+
+RUN npm run build 2>/dev/null || npx vite build
+
 FROM nginx:1.27-alpine
 
-# Remove default nginx config
 RUN rm /etc/nginx/conf.d/default.conf
 
-# Copy custom nginx configuration
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 
-# Copy all static frontend files
-COPY . /usr/share/nginx/html
+COPY --from=builder /app/dist /usr/share/nginx/html
 
-# Ensure proper permissions
 RUN chown -R nginx:nginx /usr/share/nginx/html && \
     chmod -R 755 /usr/share/nginx/html
 
