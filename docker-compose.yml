@@ -15,11 +15,11 @@ services:
     networks:
       - hermenius-net
     healthcheck:
-      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/')"]
-      interval: 30s
-      timeout: 10s
+      test: ["CMD-SHELL", "python -c \"import urllib.request,urllib.error; urllib.request.urlopen('http://localhost:8000/')\" || exit 1"]
+      interval: 15s
+      timeout: 5s
       retries: 3
-      start_period: 15s
+      start_period: 10s
 
   frontend:
     build:
@@ -31,7 +31,7 @@ services:
       - "127.0.0.1:8080:80"
     depends_on:
       backend:
-        condition: service_healthy
+        condition: service_started
     networks:
       - hermenius-net
 
