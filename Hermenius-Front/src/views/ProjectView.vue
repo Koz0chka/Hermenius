@@ -10,7 +10,7 @@ import type { PlotData } from '@/stores/analysis'
 import Plotly from 'plotly.js-dist-min'
 
 const router = useRouter()
-const { t: translate, locale } = useI18n()
+const { t, locale } = useI18n()
 const analysisStore = useAnalysisStore()
 const themeStore = useThemeStore()
 
@@ -23,16 +23,16 @@ const focusedPlotEl = ref<HTMLDivElement | null>(null)
 const cardSpans = ref<Record<number, { col: number; row: number }>>({})
 
 const projectTitle = computed(() => {
-  return analysisStore.result?.fileInfo?.filename || translate('app_name')
+  return analysisStore.result?.fileInfo?.filename || t('app_name')
 })
 
 const keyMetrics = computed(() => {
   const r = analysisStore.result
   if (!r) return []
   return [
-    { label: translate('rows'), value: String(r.fileInfo.rows), color: 'var(--accent-primary)' },
-    { label: translate('columns'), value: String(r.fileInfo.columns), color: 'var(--accent-primary)' },
-    { label: translate('time'), value: r.processingTime.toFixed(1) + ' ' + translate('sec'), color: 'var(--accent-primary)' },
+    { label: t('rows'), value: String(r.fileInfo.rows), color: 'var(--accent-primary)' },
+    { label: t('columns'), value: String(r.fileInfo.columns), color: 'var(--accent-primary)' },
+    { label: t('time'), value: r.processingTime.toFixed(1) + ' ' + t('sec'), color: 'var(--accent-primary)' },
   ]
 })
 
@@ -185,28 +185,28 @@ async function renderPlots() {
 
     try {
       const themedTraces = plot.traces.map((trace: any, ti: number) => {
-        const tr: any = { ...trace }
+        const t: any = { ...trace }
+
         const color = cfg.colors[ti % cfg.colors.length]
-        if (tr.marker) {
-          tr.marker = { ...tr.marker, color }
+        if (t.marker) {
+          t.marker = { ...t.marker, color }
         }
-        if (tr.line) {
-          tr.line = { ...tr.line, color }
+        if (t.line) {
+          t.line = { ...t.line, color }
         }
-        if (tr.type === 'heatmap' && cfg.colorscale_heatmap) {
-          tr.colorscale = cfg.colorscale_heatmap
+
+        if (t.type === 'heatmap' && cfg.colorscale_heatmap) {
+          t.colorscale = cfg.colorscale_heatmap
         }
-        if (tr.type === 'pie' || tr.type === 'sunburst') {
-          const sliceCount = (tr.labels as string[])?.length || 8
-          const baseColors = cfg.colors || ['#06b6d4', '#8b5cf6', '#10b981', '#f59e0b', '#ef4444', '#ec4899', '#14b8a6', '#f97316']
-          const pieColors: string[] = []
-          for (let s = 0; s < sliceCount; s++) {
-            pieColors.push(baseColors[s % baseColors.length])
+
+        if (t.type === 'pie' || t.type === 'sunburst') {
+          if (t.marker) {
+            t.marker = { ...t.marker, colors: cfg.colors }
           }
-          tr.marker = { ...tr.marker, colors: pieColors }
         }
-        return tr
+        return t
       })
+
 
       const themedLayout: any = {
         ...plot.layout,
@@ -224,13 +224,22 @@ async function renderPlots() {
       themedLayout.yaxis.gridcolor = cfg.grid_color
       themedLayout.yaxis.zerolinecolor = cfg.zeroline_color
       themedLayout.yaxis.color = cfg.font_color
+
       if (themedLayout.showlegend !== false) {
         themedLayout.legend = { ...(themedLayout.legend || {}), font: { color: cfg.font_color } }
       }
+
       if (plot.type === 'pie') {
-        themedLayout.margin = { l: 10, r: 10, t: 40, b: 10 }
+        themedLayout.margin = { l: 20, r: 20, t: 30, b: 40 }
         themedLayout.xaxis = { visible: false }
         themedLayout.yaxis = { visible: false }
+        themedLayout.legend = {
+          orientation: 'h',
+          y: -0.15,
+          x: 0.5,
+          xanchor: 'center',
+          font: { color: cfg.font_color, size: 10 },
+        }
       }
 
       Plotly.react(el, themedTraces, themedLayout, {
@@ -260,6 +269,7 @@ function resizeAllPlots() {
 watch(plots, () => {
   if (plots.value.length > 0) renderPlots()
 }, { immediate: true })
+
 
 watch(() => themeStore.currentTheme, () => {
   if (plots.value.length > 0) renderPlots()
@@ -320,6 +330,7 @@ function initDragAndDrop() {
     const [moved] = arr.splice(dragSrcIndex.value, 1)
     arr.splice(targetIndex, 0, moved)
     analysisStore.result = { ...store }
+
     const oldSpans = { ...cardSpans.value }
     cardSpans.value = {}
     for (const [oldIdx, span] of Object.entries(oldSpans)) {
@@ -348,6 +359,7 @@ function handleResizeStart(e: MouseEvent, index: number) {
   if (!card) return
   const grid = card.parentElement!
   if (!grid) return
+
 
   const colUnit = grid.offsetWidth / 3
   const rowUnit = 120
@@ -480,7 +492,7 @@ async function exportDashboardHTML() {
 </head>
 <body>
 <h1>${title}</h1>
-<div class="subtitle">Hermenius Dashboard ${fi ? '— ' + fi.rows + ' ' + translate('rows') + ', ' + fi.columns + ' ' + translate('columns') : ''}</div>`
+<div class="subtitle">Hermenius Dashboard ${fi ? '— ' + fi.rows + ' ' + t('rows') + ', ' + fi.columns + ' ' + t('columns') : ''}</div>`
 
   if (metrics.length > 0) {
     html += '<div class="metrics">'
@@ -499,7 +511,7 @@ async function exportDashboardHTML() {
   html += '</div>'
 
   if (currentInsights.length > 0) {
-    html += '<div class="insights"><h2>' + translate('insights') + '</h2>'
+    html += '<div class="insights"><h2>' + t('insights') + '</h2>'
     for (const insight of currentInsights) {
       html += `<div class="insight">${insight}</div>`
     }
@@ -536,7 +548,7 @@ async function exportDashboardPNG() {
     try {
       const dataUrl = await Plotly.toImage(el, { format: 'png', width: 800, height: 500 })
       imageDataList.push({ title: plot.title, dataUrl })
-    } catch {  }
+    } catch { }
   }
 
   if (imageDataList.length === 0) return
@@ -611,13 +623,23 @@ function loadImage(src: string): Promise<HTMLImageElement> {
   <div class="project-root">
     <div class="page-container project-page">
       <header class="project-header">
-        <router-link to="/profile" class="back-link">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <line x1="19" y1="12" x2="5" y2="12"></line>
-            <polyline points="12 19 5 12 12 5"></polyline>
-          </svg>
-          <span>{{ translate('back_projects') }}</span>
-        </router-link>
+        <div class="mobile-nav-bar">
+          <router-link to="/profile" class="back-link">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="19" y1="12" x2="5" y2="12"></line>
+              <polyline points="12 19 5 12 12 5"></polyline>
+            </svg>
+            <span>{{ t('back_projects') }}</span>
+          </router-link>
+          <button class="mobile-export-btn" @click="handleExportToggle($event)">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+              <polyline points="17 8 12 3 7 8"></polyline>
+              <line x1="12" y1="3" x2="12" y2="15"></line>
+            </svg>
+            <span>{{ t('export') }}</span>
+          </button>
+        </div>
         <div class="project-title-group">
           <h1 class="project-title">{{ projectTitle }}</h1>
         </div>
@@ -628,7 +650,7 @@ function loadImage(src: string): Promise<HTMLImageElement> {
             :class="{ 'is-loading': regenerating || analysisStore.loading }"
             :disabled="regenerating || analysisStore.loading"
             @click="handleRegenerate"
-            :title="translate('regenerate')"
+            :title="t('regenerate')"
           >
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2"/>
@@ -638,7 +660,7 @@ function loadImage(src: string): Promise<HTMLImageElement> {
           <button class="icon-btn lang-btn" @click="toggleLang" :title="'Language / Язык'">
             <span class="lang-label">{{ locale === 'ru' ? 'РУ' : 'EN' }}</span>
           </button>
-          <button class="icon-btn" @click="showThemePanel = true" :title="translate('themes')">
+          <button class="icon-btn" @click="showThemePanel = true" :title="t('themes')">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <circle cx="12" cy="12" r="3"></circle>
               <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
@@ -650,7 +672,7 @@ function loadImage(src: string): Promise<HTMLImageElement> {
       <main class="project-main">
         <div class="grid-hint" v-if="hasData">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="5 9 2 12 5 15"></polyline><polyline points="12 15 19 9 22 12"></polyline></svg>
-          <span>{{ translate('drag_hint') }}</span>
+          <span>{{ t('drag_hint') }}</span>
         </div>
 
         <div class="metrics-bar" v-if="keyMetrics.length > 0">
@@ -707,7 +729,7 @@ function loadImage(src: string): Promise<HTMLImageElement> {
             </div>
           </template>
           <div v-else class="empty-state" style="grid-column:1/-1;">
-            <p>{{ translate('no_data_desc') }}</p>
+            <p>{{ t('no_data_desc') }}</p>
           </div>
         </div>
 
@@ -720,8 +742,8 @@ function loadImage(src: string): Promise<HTMLImageElement> {
             </svg>
           </div>
           <div class="error-banner-text">
-            <p>{{ errorMessage || translate('ai_failed') }}</p>
-            <p class="error-banner-hint">{{ translate('try_again') }}</p>
+            <p>{{ errorMessage || t('ai_failed') }}</p>
+            <p class="error-banner-hint">{{ t('try_again') }}</p>
           </div>
           <button
             v-if="analysisStore.canRegenerate"
@@ -732,12 +754,12 @@ function loadImage(src: string): Promise<HTMLImageElement> {
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2"/>
             </svg>
-            <span>{{ translate('regenerate') }}</span>
+            <span>{{ t('regenerate') }}</span>
           </button>
         </div>
 
         <div class="insights-section" v-if="insights.length > 0">
-          <h2 class="insights-title">{{ translate('insights') }}</h2>
+          <h2 class="insights-title">{{ t('insights') }}</h2>
           <div class="insights-list">
             <div v-for="(insight, i) in insights" :key="i" class="insight-item">
               <span class="insight-number">{{ i + 1 }}</span>
@@ -749,9 +771,9 @@ function loadImage(src: string): Promise<HTMLImageElement> {
         <div class="file-info-bar" v-if="fileInfo">
           <span>{{ fileInfo.filename || '—' }}</span>
           <span class="file-info-sep">|</span>
-          <span>{{ fileInfo.rows }} {{ translate('rows') }}</span>
+          <span>{{ fileInfo.rows }} {{ t('rows') }}</span>
           <span class="file-info-sep">|</span>
-          <span>{{ analysisStore.result?.processingTime?.toFixed(1) || 0 }} {{ translate('sec') }}</span>
+          <span>{{ analysisStore.result?.processingTime?.toFixed(1) || 0 }} {{ t('sec') }}</span>
         </div>
       </main>
 
@@ -765,7 +787,7 @@ function loadImage(src: string): Promise<HTMLImageElement> {
                   <polyline points="17 8 12 3 7 8"></polyline>
                   <line x1="12" y1="3" x2="12" y2="15"></line>
                 </svg>
-                <span>{{ translate('export') }}</span>
+                <span>{{ t('export') }}</span>
               </div>
             </div>
 
@@ -774,7 +796,7 @@ function loadImage(src: string): Promise<HTMLImageElement> {
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                   <polyline points="15 18 9 12 15 6"></polyline>
                 </svg>
-                <span>{{ translate('back_projects') }}</span>
+                <span>{{ t('back_projects') }}</span>
               </router-link>
             </div>
           </div>
@@ -782,12 +804,12 @@ function loadImage(src: string): Promise<HTMLImageElement> {
           <div class="half-wheel">
             <div class="half-wheel-inner">
               <div class="half-wheel-grid">
-                <button class="wheel-btn" @click="handleRegenerate" :disabled="regenerating || analysisStore.loading" :title="translate('regenerate')">
+                <button class="wheel-btn" @click="handleRegenerate" :disabled="regenerating || analysisStore.loading" :title="t('regenerate')">
                   <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2"/>
                   </svg>
                 </button>
-                <button class="wheel-btn" @click="handleFullscreen" :title="translate('fullscreen')">
+                <button class="wheel-btn" @click="handleFullscreen" :title="t('fullscreen')">
                   <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <polyline points="15 3 21 3 21 9"></polyline>
                     <polyline points="9 21 3 21 3 15"></polyline>
