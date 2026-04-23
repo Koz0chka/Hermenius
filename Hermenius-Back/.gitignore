@@ -8,6 +8,7 @@ ENV/
 
 .vscode/
 .idea/
+.cache/
 
 .env
 *.pem
