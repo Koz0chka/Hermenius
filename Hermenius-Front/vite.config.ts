@@ -14,8 +14,7 @@ export default defineConfig({
   },
   build: {
     outDir: 'dist',
-    assetsDir: 'assets',
-    modulePreload: false,
+    assetsDir: 'assets'
   },
   server: {
     proxy: {
